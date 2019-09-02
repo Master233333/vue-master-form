@@ -1,8 +1,12 @@
 {
   "name": "vue-master-form",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.0.1",
+  "description": "vue fast create form",
+  "main": "index.js",
+  "author": "hzh",
+  "license": "MIT",
   "scripts": {
+    "start": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
@@ -11,7 +15,8 @@
     "core-js": "^2.6.5",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
-    "vue-property-decorator": "^8.1.0"
+    "vue-property-decorator": "^8.1.0",
+    "vue-tsx-support": "^2.3.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
