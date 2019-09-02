@@ -5,12 +5,22 @@ import BaseForm from '@/form/core/baseForm';
 import Item from '@/form/core/item';
 import {Input} from 'ant-design-vue';
 
+Vue.use(Input);
+
 @Component
 class App extends VueComponent {
   public render() {
-    return <BaseForm>
-      <Item name="test"><Input /></Item>
-    </BaseForm>;
+    return (
+      <div>
+        <div>
+          <h3>test for base form</h3>
+          <BaseForm>
+            <Item name="test"><a-input class={["test", "test2"]}/></Item>
+            <button type="submit">sub</button>
+          </BaseForm>
+        </div>
+      </div>
+    );
   }
 }
 
