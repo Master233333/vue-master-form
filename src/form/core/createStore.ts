@@ -39,6 +39,15 @@ export class Store {
     return this.meta[name];
   }
 
+  public getMetas(names?: string[]) {
+    if (names) {
+      const out: any = {};
+      names.forEach((name) => out[name] = this.meta[name]);
+      return out;
+    }
+    return this.meta;
+  }
+
   public setMeta(name: string, obj: any) {
     if (!this.meta.hasOwnProperty(name)) {
       console.warn('form store: can not set meta not on form dom');

@@ -2,28 +2,30 @@ import {Component, Provide} from 'vue-property-decorator';
 import {Component as TsxComponent} from 'vue-tsx-support';
 import {createFormObj, FormObj} from '@/form/core/createFormObj';
 import {IBaseForm, IFormUtils} from '../../../types/form';
-import {createStore, Store} from '@/form/core/createStore';
 
 @Component
 export default class BaseForm extends TsxComponent<IBaseForm> {
   @Provide()
   public readonly form: Readonly<IFormUtils>;
-  private readonly store: Readonly<Store>;
   private readonly formObj: Readonly<FormObj>;
 
   public constructor() {
     super();
     console.log('BaseForm: constructor');
-    const s = createStore();
-    const f = createFormObj(s);
-    const {addField, removeField} = s;
-    const {bindField} = f;
+    const f = createFormObj();
     const formUtil = {
-      addField: addField.bind(s),
-      removeField: removeField.bind(s),
-      bindField: bindField.bind(f),
+      addField: f.addField.bind(f),
+      removeField: f.removeField.bind(f),
+      bindField: f.bindField.bind(f),
+      resetFields: (names?: string[]) => {
+        f.resetFields(names);
+        this.forceRender();
+      },
+      setValues: f.setValues.bind(f),
+      setFields: f.setFields.bind(f),
+      getError: f.getError.bind(f),
+      getErrors: f.getErrors.bind(f),
     };
-    this.store = s;
     this.formObj = f;
     this.form = Object.freeze(formUtil);
   }
@@ -45,7 +47,7 @@ export default class BaseForm extends TsxComponent<IBaseForm> {
   }
   public onSubmit(e: Event) {
     e.preventDefault();
-    console.log('BaseForm: submit values', this.store.getValues());
+    console.log('BaseForm: submit values', this.formObj.getValues());
     this.$emit('submit');
   }
   protected render() {
