@@ -11,7 +11,8 @@ export interface IFormUtils {
 }
 
 export interface IBaseForm {
-
+  onSubmit?: () => void;
+  onForm?: (form: any) => void;
 }
 
 export interface IItem {
