@@ -7,9 +7,9 @@ export interface IVNodeData extends VNodeData {
 
 export interface FormRule {
   type: string;
-  value: any;
+  value?: any;
   message?: string;
-  validator?: (data: any) => boolean;
+  validator?: (data: any, value: any) => boolean;
 }
 
 export interface FormOptions {

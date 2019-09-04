@@ -1,4 +1,4 @@
-export function getNames(obj: any) {
+export function getNames(obj: any): string[] {
   if (!obj) {
     return [];
   }

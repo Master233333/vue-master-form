@@ -18,12 +18,13 @@ class App extends VueComponent {
         <div>
           <h3>test for base form</h3>
           <BaseForm onForm={(f: FormUtils) => this.form = f}>
-            <Item name="test1"><a-input /></Item>
+            <Item name="test1" rules={[{type: 'required', value: true, message: 'null'}]} options={{initValue: '321'}} inputProps={{on: {change(e: any){console.log(e)}}}}><a-input /></Item>
             <Item name="test2"><a-input /></Item>
             <button type="submit">sub</button>
           </BaseForm>
           <button onClick={() => this.form.resetFields()}>reset</button>
           <button onClick={() => this.form.setValues({test1: '321'})}>set</button>
+          <button onClick={() => this.form.validateFields((val, errs) => {console.log(val, errs)})}>va</button>
         </div>
       </div>
     );

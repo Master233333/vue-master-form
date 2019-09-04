@@ -39,7 +39,14 @@ function validateRules(value: any, rules?: FormRule[]) {
           addError(rule);
         }
         break;
+      case 'diy':
       default:
+        if (!rule.validator) {
+          break;
+        }
+        if (rule.validator(value, rule.value)) {
+          addError(rule);
+        }
         break;
     }
   });
@@ -48,14 +55,39 @@ function validateRules(value: any, rules?: FormRule[]) {
 
 export class FormObj extends Store {
 
-  public bindField(context: Vue, name: string, rules?: FormRule[], options?: FormOptions) {
+  public getValue(name: string) {
+    return super.getValue(name) || this.getOption(name, 'initValue');
+  }
+
+  public getValues(names?: string[]) {
+    const out: any = {};
+    let ns = names;
+    if (!ns) {
+      ns = getNames(super.getValues());
+    }
+    ns.forEach((name) => out[name] = this.getValue(name));
+    return out;
+  }
+
+  public bindField(context: Vue, name: string, rules?: FormRule[], options: FormOptions = {}) {
     return (input: VNode, nodeProps: VNodeData = {}) => {
       const {props = {}, on = {}} = nodeProps;
-      on.change = (...args: any[]) => {
-        this.addListenerOn(name)(...args);
+      const trigger = options.trigger || 'change';
+      const initOn = on[trigger];
+      console.log(initOn);
+      on[trigger] = (...args: any[]) => {
+        console.log(initOn);
+        if (initOn) {
+          initOn(...args);
+        }
+        this.addListenerOn(name, options.getValueFromEvent)(...args);
         context.$forceUpdate();
       };
-      props.value = this.getValue(name);
+      let value = this.getValue(name) || options.initValue;
+      if (options.normalize) {
+        value = options.normalize(value);
+      }
+      props.value = value;
 
       this.setOption(name, {rules, ...options});
       return cloneElement(input, {...nodeProps, on, props});
@@ -114,10 +146,12 @@ export class FormObj extends Store {
     return this.getMeta(name)[key];
   }
 
-  private addListenerOn(name: string) {
+  private addListenerOn(name: string, getValueFromEvent?: (e: any) => any) {
     return (e?: any) => {
       let value = e;
-      if (e && e.target) {
+      if (getValueFromEvent) {
+        value = getValueFromEvent(e);
+      } else if (e && e.target) {
         value = e.target.checked || e.target.value;
       }
       this.setValues({[name]: value});

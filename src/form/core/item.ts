@@ -20,12 +20,15 @@ export default class Item extends TsxComponent<IItem> {
     this.form.addField(this.name);
   }
   public destroyed() {
+    if (this.options && this.options.preserve) {
+      return;
+    }
     console.log('Item: remove field', this.name);
     this.form.removeField(this.name);
   }
   public render() {
     console.log('Item: render', this.name);
-    const {form, name} = this;
+    const {form, name, rules, options, inputProps} = this;
     const childes = this.$slots.default;
     if (!childes || !childes.length) {
       return '';
@@ -35,6 +38,6 @@ export default class Item extends TsxComponent<IItem> {
       return '';
     }
     const child = childes[0];
-    return form.bindField(this, name)(child);
+    return form.bindField(this, name, rules, options)(child, inputProps);
   }
 }

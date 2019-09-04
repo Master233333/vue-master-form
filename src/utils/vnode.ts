@@ -128,3 +128,7 @@ export function cloneElement(n: VNode, nodeProps: IVNodeData = {}, deep?: boolea
   }
   return node;
 }
+
+export function getVNodeListeners(n: VNode) {
+ return n.componentOptions && n.componentOptions.listeners;
+}

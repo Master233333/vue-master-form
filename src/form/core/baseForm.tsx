@@ -41,20 +41,21 @@ export default class BaseForm extends TsxComponent<IBaseForm> {
     console.log('BaseForm: forceUpdate');
     this.$forceUpdate();
     const child = this.$slots.default;
-    if (child) {
-      child.forEach((c) => {
-        if (c.context) {
-          c.context.$forceUpdate();
-        }
-      });
+    if (!child) {
+      return;
     }
+    child.forEach((c) => {
+      if (c.context) {
+        c.context.$forceUpdate();
+      }
+    });
   }
   public onSubmit(e: Event) {
     e.preventDefault();
     console.log('BaseForm: submit values', this.form.getValues());
     this.$emit('submit');
   }
-  protected render() {
+  public render() {
     const {onSubmit} = this;
     const child = this.$slots.default;
     console.log('BaseForm: render');
