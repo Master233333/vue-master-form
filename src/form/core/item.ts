@@ -1,12 +1,11 @@
 import {Component, Inject, Prop, Provide} from 'vue-property-decorator';
 import {Component as TsxComponent} from 'vue-tsx-support';
-import {FormObj} from '@/form/core/createFormObj';
-import {IFormUtils, IItem} from '../../../types/form';
+import {FormUtils, IItem} from '../../../types/form';
 
 @Component
 export default class Item extends TsxComponent<IItem> {
   @Inject()
-  public form!: Readonly<IFormUtils>;
+  public form!: Readonly<FormUtils>;
   @Prop()
   public name!: string;
 
@@ -30,6 +29,6 @@ export default class Item extends TsxComponent<IItem> {
       return '';
     }
     const child = childes[0];
-    return form.bindField(name)(child);
+    return form.bindField(this, name)(child);
   }
 }

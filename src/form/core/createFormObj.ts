@@ -2,17 +2,49 @@ import {Store} from '@/form/core/createStore';
 import {VNode, VNodeData} from "vue";
 import {cloneElement} from "@/utils/vnode";
 import {getNames} from '@/utils/objectUtils';
+import {FormError, FormOptions, FormRule} from '../../../types/form';
+import {Vue} from 'vue/types/vue';
+
+function validateRules(value: any, rules?: FormRule[]) {
+  if (!rules) {
+    return [];
+  }
+  const errors: FormError[] = [];
+  const addError = (rule: FormRule) => {
+    errors.push({
+      type: rule.type,
+      message: rule.message || '',
+    });
+  };
+  rules.forEach((rule) => {
+    switch (rule.type) {
+      case 'required':
+        if (!value) {
+          addError(rule);
+        }
+        break;
+      case 'max':
+        if (typeof value === 'string' && value.length > rule.value) {
+          addError(rule);
+        }
+        break;
+      case 'min':
+        break;
+      default:
+        break;
+    }
+  });
+  return errors;
+}
 
 export class FormObj extends Store {
 
-  public bindField(name: string, rules?: any[], options?: any) {
+  public bindField(context: Vue, name: string, rules?: FormRule[], options?: FormOptions) {
     return (input: VNode, nodeProps: VNodeData = {}) => {
       const {props = {}, on = {}} = nodeProps;
       on.change = (...args: any[]) => {
         this.addListenerOn(name)(...args);
-        if (input.context) {
-          input.context.$forceUpdate();
-        }
+        context.$forceUpdate();
       };
       props.value = this.getValue(name);
 
@@ -21,7 +53,21 @@ export class FormObj extends Store {
     };
   }
 
-  public setFields(val: any) {
+  public validateFields(func: (values: {[name: string]: any}, errors: {[name: string]: FormError[]}) => void, names?: string[]) {
+    const values = this.getValues(names);
+    const errors: any = {};
+    getNames(values).forEach((name) => {
+      const rules = this.getOption(name, 'rules');
+      const errs = validateRules(values[name], rules);
+      this.setOption(name, {errors: errs});
+      if (errs.length) {
+        errors[name] = errs;
+      }
+    });
+    func(values, getNames(errors).length ? errors : undefined);
+  }
+
+  public setFields(val: {[name: string]: {value: any, errors: FormError[]}}) {
     getNames(val).forEach((name) => {
       const {setValues, getMeta, setMeta} = this;
       setValues({name: val[name].value});
@@ -32,7 +78,7 @@ export class FormObj extends Store {
   }
 
   public getError(name: string) {
-    return this.getMeta(name).errors;
+    return this.getOption(name, 'errors');
   }
 
   public getErrors(names?: string[]) {
@@ -48,12 +94,11 @@ export class FormObj extends Store {
   }
 
   private setOption(name: string, option: any) {
-    const {setMeta, getMeta} = this;
-    const meta = getMeta(name);
+    const meta = this.getMeta(name);
     getNames(option).forEach((key) => {
       meta[key] = option[key];
     });
-    setMeta(name, meta);
+    this.setMeta(name, meta);
   }
 
   private getOption(name: string, key: string) {
@@ -73,5 +118,5 @@ export class FormObj extends Store {
 }
 
 export function createFormObj() {
-  return Object.freeze(new FormObj());
+  return new FormObj();
 }

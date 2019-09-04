@@ -14,7 +14,7 @@ export class Store {
     delete this.meta[name];
   }
 
-  public setValues(obj: any) {
+  public setValues(obj: {[name: string]: any}) {
     getNames(obj).forEach((name) => {
       if (!this.values.hasOwnProperty(name)) {
         console.warn('form store: can not set value not on form dom');
