@@ -1,6 +1,6 @@
 import {Component, Inject, Prop, Provide} from 'vue-property-decorator';
 import {Component as TsxComponent} from 'vue-tsx-support';
-import {FormUtils, IItem} from '../../../types/form';
+import {FormOptions, FormRule, FormUtils, IItem, IVNodeData} from '../../../types/form';
 
 @Component
 export default class Item extends TsxComponent<IItem> {
@@ -8,6 +8,12 @@ export default class Item extends TsxComponent<IItem> {
   public form!: Readonly<FormUtils>;
   @Prop()
   public name!: string;
+  @Prop()
+  public rules?: FormRule[];
+  @Prop()
+  public options?: FormOptions;
+  @Prop()
+  public inputProps?: IVNodeData;
 
   public created() {
     console.log('Item: add field', this.name);

@@ -49,6 +49,7 @@ export interface IItem {
   name: string;
   rules?: FormRule[];
   options?: FormOptions;
+  inputProps?: IVNodeData;
 }
 
 export interface IFormItem {

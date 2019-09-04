@@ -27,8 +27,17 @@ function validateRules(value: any, rules?: FormRule[]) {
         if (typeof value === 'string' && value.length > rule.value) {
           addError(rule);
         }
+        if (typeof value === 'number' && value > rule.value) {
+          addError(rule);
+        }
         break;
       case 'min':
+        if (typeof value === 'string' && value.length < rule.value) {
+          addError(rule);
+        }
+        if (typeof value === 'number' && value < rule.value) {
+          addError(rule);
+        }
         break;
       default:
         break;
