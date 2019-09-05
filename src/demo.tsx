@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import { Component, Vue as VueComponent, Provide } from 'vue-property-decorator';
 import 'vue-tsx-support/enable-check';
-import BaseForm from '@/form/core/baseForm';
 import Item from '@/form/core/item';
 import {Input} from 'ant-design-vue';
 import {FormUtils} from '../types/form';
+import Form from '@/form/form';
 
 Vue.use(Input);
 
@@ -17,11 +17,11 @@ class App extends VueComponent {
       <div>
         <div>
           <h3>test for base form</h3>
-          <BaseForm onForm={(f: FormUtils) => this.form = f}>
-            <Item name="test1" rules={[{type: 'required', value: true, message: 'null'}]} options={{initValue: '321'}} inputProps={{on: {change(e: any){console.log(e)}}}}><a-input /></Item>
-            <Item name="test2"><a-input /></Item>
+          <Form onForm={(f: FormUtils) => this.form = f}>
+            <Item name="[test][eer][0]" rules={[{type: 'required', value: true, message: 'null'}]} options={{initValue: '321'}} inputProps={{on: {change(e: any){console.log('1:' + e)}}}}><a-input onChange={() => console.log('333')}/></Item>
+            <Item name="[test][eer][1]"><a-input /></Item>
             <button type="submit">sub</button>
-          </BaseForm>
+          </Form>
           <button onClick={() => this.form.resetFields()}>reset</button>
           <button onClick={() => this.form.setValues({test1: '321'})}>set</button>
           <button onClick={() => this.form.validateFields((val, errs) => {console.log(val, errs)})}>va</button>

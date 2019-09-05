@@ -1,8 +1,8 @@
 import {Store} from '@/form/core/createStore';
 import {VNode, VNodeData} from "vue";
-import {cloneElement} from "@/utils/vnode";
+import {cloneElement, getVNodeListeners} from '@/utils/vnode';
 import {getNames} from '@/utils/objectUtils';
-import {FormError, FormOptions, FormRule} from '../../../types/form';
+import {FormError, FormOptions, FormRule, FormUtils} from '../../../types/form';
 import {Vue} from 'vue/types/vue';
 
 function validateRules(value: any, rules?: FormRule[]) {
@@ -53,49 +53,120 @@ function validateRules(value: any, rules?: FormRule[]) {
   return errors;
 }
 
-export class FormObj extends Store {
+function getFullName(name: string, list?: string[]): string[] {
+  if (!list) {
+    list = [];
+  }
+  if (!name.length) {
+    return list;
+  }
+  const index = name.indexOf('[');
+  if (index !== -1) {
+    if (index !== 0) {
+      list.push(name.substring(0, index));
+      name = name.substring(index);
+    }
+    list.push(name.substring(1, name.indexOf(']')));
+    return getFullName(name.substring(name.indexOf(']') + 1), list);
+  } else {
+    return [...list, name];
+  }
+}
+
+export class FormObj extends Store implements FormUtils {
+  private context: Vue;
+
+  public constructor(context: Vue) {
+    super();
+    this.context = context;
+  }
+  public setValues(val: any) {
+    super.setValues(val);
+    this.forceUpdateAll();
+  }
+
+  public resetFields(names?: string[]) {
+    super.resetFields(names);
+    this.forceUpdateAll();
+  }
 
   public getValue(name: string) {
-    return super.getValue(name) || this.getOption(name, 'initValue');
+    const value = super.getValue(name);
+    if (!value && this.getOption(name, 'hasChange') !== true) {
+      return this.getOption(name, 'initValue');
+    }
+    return value;
   }
 
   public getValues(names?: string[]) {
     const out: any = {};
-    let ns = names;
-    if (!ns) {
-      ns = getNames(super.getValues());
-    }
-    ns.forEach((name) => out[name] = this.getValue(name));
+    const values = this.getFieldValues(names);
+    const reg = /^[\d|\.]*$/;
+    getNames(values).forEach((name) => {
+      const ns = getFullName(name);
+      let newName = '';
+      ns.forEach((nn, i) => {
+        // tslint:disable-next-line:no-eval
+        const obj = eval('out' + newName);
+        if (i === ns.length - 1) {
+          obj[nn] = values[name];
+        } else if (!obj[nn]) {
+          const isNum = reg.test(ns[i]);
+          obj[nn] = isNum ? [] : {};
+        } else {
+          const isNum = reg.test(ns[i]);
+          if (isNum && Array.isArray(obj[nn])) {
+            console.error('FormObj: can not setForm with diff type');
+          }
+          if (!isNum && typeof obj[nn] !== 'object') {
+            console.error('FormObj: can not setForm with diff type');
+          }
+        }
+        newName += `['${nn}']`;
+      });
+    });
     return out;
   }
 
   public bindField(context: Vue, name: string, rules?: FormRule[], options: FormOptions = {}) {
+    this.setOption(name, {rules, ...options});
     return (input: VNode, nodeProps: VNodeData = {}) => {
       const {props = {}, on = {}} = nodeProps;
       const trigger = options.trigger || 'change';
-      const initOn = on[trigger];
-      console.log(initOn);
-      on[trigger] = (...args: any[]) => {
-        console.log(initOn);
-        if (initOn) {
-          initOn(...args);
+      const initListeners = getVNodeListeners(input);
+      const newOn = {...on};
+      newOn[trigger] = (...args: any[]) => {
+        if (on[trigger]) {
+          // @ts-ignore
+          on[trigger](...args);
         }
         this.addListenerOn(name, options.getValueFromEvent)(...args);
         context.$forceUpdate();
       };
-      let value = this.getValue(name) || options.initValue;
+      getNames(newOn).forEach((key) => {
+        if (initListeners && initListeners.hasOwnProperty(key)) {
+          const initAction = newOn[key];
+          newOn[key] = (...args: any[]) => {
+            // @ts-ignore
+            initListeners[key](...args);
+            // @ts-ignore
+            initAction(...args);
+          };
+        }
+      });
+
+      let value = this.getValue(name);
       if (options.normalize) {
         value = options.normalize(value);
       }
       props.value = value;
 
-      this.setOption(name, {rules, ...options});
-      return cloneElement(input, {...nodeProps, on, props});
+      return cloneElement(input, {...nodeProps, on: newOn, props});
     };
   }
 
   public validateFields(func: (values: {[name: string]: any}, errors: {[name: string]: FormError[]}) => void, names?: string[]) {
-    const values = this.getValues(names);
+    const values = this.getFieldValues(names);
     const errors: any = {};
     getNames(values).forEach((name) => {
       const rules = this.getOption(name, 'rules');
@@ -105,7 +176,7 @@ export class FormObj extends Store {
         errors[name] = errs;
       }
     });
-    func(values, getNames(errors).length ? errors : undefined);
+    func(this.getValues(names), getNames(errors).length ? errors : undefined);
   }
 
   public setFields(val: {[name: string]: {value: any, errors: FormError[]}}) {
@@ -134,6 +205,16 @@ export class FormObj extends Store {
     return getNames(out).length ? out : undefined;
   }
 
+  private getFieldValues(names?: string[]) {
+    const out: any = {};
+    let ns = names;
+    if (!ns) {
+      ns = getNames(super.getValues());
+    }
+    ns.forEach((name) => out[name] = this.getValue(name));
+    return out;
+  }
+
   private setOption(name: string, option: any) {
     const meta = this.getMeta(name);
     getNames(option).forEach((key) => {
@@ -155,11 +236,31 @@ export class FormObj extends Store {
         value = e.target.checked || e.target.value;
       }
       this.setValues({[name]: value});
+      this.setOption(name, {hasChange: true});
       console.log(`FormObj: change name:${name} value:${value}`);
     };
   }
+
+  private forceUpdate() {
+    console.log('FormObj: update');
+    this.context.$forceUpdate();
+  }
+
+  private forceUpdateAll() {
+    console.log('FormObj: update all');
+    this.forceUpdate();
+    const child = this.context.$slots.default;
+    if (!child) {
+      return;
+    }
+    child.forEach((c) => {
+      if (c.context) {
+        c.context.$forceUpdate();
+      }
+    });
+  }
 }
 
-export function createFormObj() {
-  return new FormObj();
+export function createFormObj(context: Vue) {
+  return Object.freeze(new FormObj(context));
 }

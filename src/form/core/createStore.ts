@@ -5,6 +5,10 @@ export class Store {
   private meta: any = {};
 
   public addField(name: string) {
+    if (this.values.hasOwnProperty(name)) {
+      console.error('FormObj: can not setForm with the same name');
+      return;
+    }
     this.values[name] = undefined;
     this.meta[name] = {};
   }
@@ -59,13 +63,18 @@ export class Store {
   public resetFields(names?: string[]) {
     if (names) {
       names.forEach((name) => {
-        this.addField(name);
+        this.resetField(name);
       });
     } else {
       getNames(this.values).forEach((name) => {
-        this.addField(name);
+        this.resetField(name);
       });
     }
+  }
+
+  private resetField(name: string) {
+    this.values[name] = undefined;
+    this.meta[name] = {};
   }
 
 }
