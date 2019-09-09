@@ -4,6 +4,7 @@ import {cloneElement, getVNodeListeners} from '@/utils/vnode';
 import {getNames} from '@/utils/objectUtils';
 import {FormError, FormOptions, FormRule, FormUtils} from '../../../types/form';
 import {Vue} from 'vue/types/vue';
+import {errorMessage} from '@/form/config';
 
 function validateRules(value: any, rules?: FormRule[]) {
   if (!rules) {
@@ -11,9 +12,11 @@ function validateRules(value: any, rules?: FormRule[]) {
   }
   const errors: FormError[] = [];
   const addError = (rule: FormRule) => {
+    let defaultMsg = errorMessage[rule.type] || 'error';
+    defaultMsg = defaultMsg.replace(/%v/, rule.value);
     errors.push({
       type: rule.type,
-      message: rule.message || '',
+      message: rule.message || defaultMsg,
     });
   };
   rules.forEach((rule) => {
@@ -224,7 +227,8 @@ export class FormObj extends Store implements FormUtils {
   }
 
   private getOption(name: string, key: string) {
-    return this.getMeta(name)[key];
+    const meta = this.getMeta(name);
+    return meta && meta[key];
   }
 
   private addListenerOn(name: string, getValueFromEvent?: (e: any) => any) {
@@ -235,8 +239,10 @@ export class FormObj extends Store implements FormUtils {
       } else if (e && e.target) {
         value = e.target.checked || e.target.value;
       }
-      this.setValues({[name]: value});
-      this.setOption(name, {hasChange: true});
+      super.setValues({[name]: value});
+      const errs = validateRules(value, this.getOption(name, 'rules'));
+      console.log(errs, this.getOption(name, 'rules'));
+      this.setOption(name, {hasChange: true, errors: errs});
       console.log(`FormObj: change name:${name} value:${value}`);
     };
   }
