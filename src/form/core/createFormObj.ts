@@ -179,6 +179,7 @@ export class FormObj extends Store implements FormUtils {
         errors[name] = errs;
       }
     });
+    this.forceUpdateAll();
     func(this.getValues(names), getNames(errors).length ? errors : undefined);
   }
 
@@ -241,7 +242,6 @@ export class FormObj extends Store implements FormUtils {
       }
       super.setValues({[name]: value});
       const errs = validateRules(value, this.getOption(name, 'rules'));
-      console.log(errs, this.getOption(name, 'rules'));
       this.setOption(name, {hasChange: true, errors: errs});
       console.log(`FormObj: change name:${name} value:${value}`);
     };
