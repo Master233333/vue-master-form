@@ -1,4 +1,4 @@
-import {getNames} from '@/utils/objectUtils';
+import {getNames} from '../../utils/objectUtils';
 
 export class Store {
   private values: any = {};

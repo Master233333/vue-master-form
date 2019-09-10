@@ -1,10 +1,10 @@
-import {Store} from '@/form/core/createStore';
+import {Store} from './createStore';
 import {VNode, VNodeData} from "vue";
-import {cloneElement, getVNodeListeners} from '@/utils/vnode';
-import {getNames} from '@/utils/objectUtils';
+import {cloneElement, getVNodeListeners} from '../../utils/vnode';
+import {getNames} from '../../utils/objectUtils';
 import {FormError, FormOptions, FormRule, FormUtils} from '../../../types/form';
 import {Vue} from 'vue/types/vue';
-import {errorMessage} from '@/form/config';
+import {errorMessage} from '../config';
 
 function validateRules(value: any, rules?: FormRule[]) {
   if (!rules) {

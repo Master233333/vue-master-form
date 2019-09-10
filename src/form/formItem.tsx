@@ -1,13 +1,14 @@
 import {Component, Inject, Prop} from 'vue-property-decorator';
 import {Component as TsxComponent} from 'vue-tsx-support';
 import {FormOptions, FormRule, FormUtils, IFormItem, IVNodeData} from '../../types/form';
-import {getInputs} from '@/form/config';
-import {FormObj} from '@/form/core/createFormObj';
+import {FormObj} from './core/createFormObj';
 
 @Component
 export default class FormItem extends TsxComponent<IFormItem> {
   @Inject()
   public form!: FormObj;
+  @Inject()
+  public getInputs!: any;
   @Prop()
   public name?: string;
   @Prop()
@@ -34,7 +35,7 @@ export default class FormItem extends TsxComponent<IFormItem> {
   public initData!: any;
   @Prop()
   public inputData!: any;
-  public getInput = getInputs(this.$createElement);
+  public getInput = this.getInputs(this.$createElement);
 
   public created() {
     console.log('FormItem: add field', this.name);
