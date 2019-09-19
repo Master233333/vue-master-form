@@ -4,7 +4,9 @@ import {cloneElement, getVNodeListeners} from '../../utils/vnode';
 import {getNames} from '../../utils/objectUtils';
 import {FormError, FormOptions, FormRule, FormUtils} from '../../../types/form';
 import {Vue} from 'vue/types/vue';
-import {errorMessage} from '../config';
+import config from '../config';
+
+const errorMessage = config.errorMessage;
 
 function validateRules(value: any, rules?: FormRule[]) {
   if (!rules) {

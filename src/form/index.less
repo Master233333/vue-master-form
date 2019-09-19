@@ -1,0 +1,35 @@
+.mh-form .mh-form-item {
+  margin-bottom: 24px;
+  .mh-form-item-extra {
+    color: rgba(0, 0, 0, 0.45);
+  }
+  .mh-form-item-error {
+    color: #f5222d;
+  }
+}
+
+.mh-form-layout-horizontal, .mh-form-layout-inline {
+  .mh-form-item-label {
+    text-align: right;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .mh-form-item-label, .mh-form-item-control-wrapper {
+    display: inline-block;
+    vertical-align: top;
+  }
+}
+
+.mh-form-layout-horizontal, .mh-form-layout-inline {
+  .mh-form-item-label label::after {
+    content: ':';
+    margin: 0 8px 0 2px;
+    position: relative;
+  }
+}
+
+.mh-form-layout-inline .mh-form-item {
+  display: inline-block;
+  margin-right: 16px;
+  margin-bottom: 0;
+}

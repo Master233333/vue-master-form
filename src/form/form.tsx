@@ -1,9 +1,10 @@
-import {Component, Inject, Prop, Provide} from 'vue-property-decorator';
-import {Component as TsxComponent} from 'vue-tsx-support';
-import {FormUtils, IForm, ItemAttrs} from '../../types/form';
+import {Component, Prop, Provide} from 'vue-property-decorator';
+import {IForm, ItemAttrs} from '../../types/form';
 import {createFormObj} from './core/createFormObj';
 import FormItem from "./formItem";
 import {CreateElement} from 'vue';
+import {Component as TsxComponent} from 'vue-tsx-support';
+
 
 export function renderFormItem(h: CreateElement, item: ItemAttrs, initData?: any) {
   if (item.show === false) {
@@ -12,7 +13,7 @@ export function renderFormItem(h: CreateElement, item: ItemAttrs, initData?: any
   if (item.type === 'other') {
     return item.input;
   }
-  const inputProps = item.inputProps || {};
+  const inputProps = Object.assign(item.inputProps || {}, {});
   if (item.onChange) {
     inputProps.on = {...inputProps.on, change: item.onChange};
   }
@@ -29,13 +30,13 @@ export function renderFormItem(h: CreateElement, item: ItemAttrs, initData?: any
     editable={item.editable}
     required={item.required}
     bindValue={item.bindValue}
-    initData={item.initData}
+    initData={item.initData || initData}
     inputData={item.inputData}
   >{item.input}</FormItem>;
 }
 
 @Component
-export default class Form extends TsxComponent<IForm> {
+export default class Form extends TsxComponent<IForm>{
   @Provide()
   public readonly form = createFormObj(this);
   @Prop()
@@ -71,7 +72,7 @@ export default class Form extends TsxComponent<IForm> {
     const child = this.$slots.default;
     const inputs = items.map((item) => renderFormItem(this.$createElement, item, initData));
     return (
-      <form onSubmit={onSubmit} class="mh-form">
+      <form onSubmit={onSubmit} class={{'mh-form': true, [`mh-form-layout-${layout}`]: !!layout}}>
         {inputs}
         {child}
       </form>

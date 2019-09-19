@@ -1,6 +1,6 @@
 import {VNode, VNodeData} from "vue";
 import {parseStyleText} from "./utils";
-import {IVNodeData} from "../../types/form";
+import {IVNodeData} from "../../types/index";
 
 export function cloneVNode(vnode: any, deep?: boolean): VNode {
   const componentOptions = vnode.componentOptions;

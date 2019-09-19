@@ -1,14 +1,13 @@
 import {Component, Inject, Prop} from 'vue-property-decorator';
 import {Component as TsxComponent} from 'vue-tsx-support';
-import {FormOptions, FormRule, FormUtils, IFormItem, IVNodeData} from '../../types/form';
+import {FormOptions, FormRule, IFormItem, IVNodeData} from '../../types/form';
 import {FormObj} from './core/createFormObj';
+import config from './config';
 
 @Component
 export default class FormItem extends TsxComponent<IFormItem> {
   @Inject()
   public form!: FormObj;
-  @Inject()
-  public getInputs!: any;
   @Prop()
   public name?: string;
   @Prop()
@@ -35,7 +34,7 @@ export default class FormItem extends TsxComponent<IFormItem> {
   public initData!: any;
   @Prop()
   public inputData!: any;
-  public getInput = this.getInputs(this.$createElement);
+  public getInput = config.getInputs(this.$createElement);
 
   public created() {
     console.log('FormItem: add field', this.name);
@@ -55,7 +54,7 @@ export default class FormItem extends TsxComponent<IFormItem> {
   public render() {
     console.log("FormItem: render");
     const {name, type, inputProps, rules, options, title, extra, text, editable, required, bindValue, initData, getInput, inputData, form} = this;
-    let input: any = this.$slots.default || getInput(type, inputData);
+    let input: any = this.$slots.default || getInput(type || 'text', inputData);
     const data = initData && name && initData[name];
     const rl = rules || [];
     let errorMsg;
@@ -84,17 +83,16 @@ export default class FormItem extends TsxComponent<IFormItem> {
         errorMsg = errors[0].message;
       }
     }
-    return (
-      <div class="mh-form-item">
-        <div class="mh-form-item-label">
-          {title && <label>{title}</label>}
-        </div>
-        <div class="mh-form-item-control-wrapper">
-          <div class="mh-form-item-control">{input}</div>
-          {errorMsg && <div class="mh-form-item-error">{errorMsg.replace(/%t/, title)}</div>}
-          {extra && <div class="mh-form-item-extra">{extra}</div>}
-        </div>
+    // @ts-ignore
+    return <div class="mh-form-item" for={name}>
+      <div class="mh-form-item-label">
+        {title && <label>{title}</label>}
       </div>
-    );
+      <div class="mh-form-item-control-wrapper">
+        <div class="mh-form-item-control">{input}</div>
+        {errorMsg && <div class="mh-form-item-error">{errorMsg.replace(/%t/, title)}</div>}
+        {extra && <div class="mh-form-item-extra">{extra}</div>}
+      </div>
+    </div>;
   }
 }
