@@ -55,15 +55,10 @@ export default class Form extends TsxComponent<IForm>{
   }
   public onSubmit(e: Event) {
     e.preventDefault();
-    if (this.loading) {
-      return;
-    }
-    this.loading = true;
-    setTimeout(() => this.loading = false, 800);
     this.form.validateFields((values: any, errs: any) => {
       console.log('Form: submit: ', values, errs);
       if (!errs) {
-        this.$emit('submit');
+        this.$emit('submit', values);
       }
     });
   }

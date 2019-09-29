@@ -68,7 +68,7 @@ export interface IFormItem {
   // 组件可选属性 FormOptions
   options?: FormOptions;
   // 组件 label
-  title?: string;
+  title?: string | VNode;
   // 额外文字提示
   extra?: string;
   // 当 editable === false 时，显示的文本
@@ -96,9 +96,10 @@ export interface ItemAttrs extends IFormItem {
 
 export interface IForm {
   // 监听submit事件
-  onSubmit?: () => void;
+  onSubmit?: (val: any) => void;
   // 监听form事件 获取FormUtil对象
   onForm?: (form: FormUtils) => void;
+  onChange?: (val: any) => void;
   // 布局
   layout?: 'horizontal'|'vertical'|'inline';
   // 表单初始值

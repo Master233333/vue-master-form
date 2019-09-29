@@ -3,6 +3,7 @@ import {Component as TsxComponent} from 'vue-tsx-support';
 import {FormOptions, FormRule, IFormItem, IVNodeData} from '../../types/form';
 import {FormObj} from './core/createFormObj';
 import config from './config';
+import {VNode} from 'vue';
 
 @Component
 export default class FormItem extends TsxComponent<IFormItem> {
@@ -19,7 +20,7 @@ export default class FormItem extends TsxComponent<IFormItem> {
   @Prop()
   public options?: FormOptions;
   @Prop()
-  public title?: string;
+  public title?: string | VNode;
   @Prop()
   public extra?: string;
   @Prop()
@@ -85,7 +86,7 @@ export default class FormItem extends TsxComponent<IFormItem> {
     }
     // @ts-ignore
     return <div class="mh-form-item" for={name}>
-      <div class="mh-form-item-label">
+      <div class={{'mh-form-item-label': true, 'mh-form-item-label-required': required && editable !== false}}>
         {title && <label>{title}</label>}
       </div>
       <div class="mh-form-item-control-wrapper">

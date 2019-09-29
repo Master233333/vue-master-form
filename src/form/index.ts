@@ -19,7 +19,7 @@ export function setGetInputs(func?: getInputs) {
 
 export class Form extends IForm {
   public name = 'mh-form';
-  public install(vue: typeof Vue, options: {getInputs?: getInputs, errorMessage?: any}) {
+  public static install(vue: typeof Vue, options: {getInputs?: getInputs, errorMessage?: any}) {
     setErrorMessage(options.errorMessage);
     setGetInputs(options.getInputs);
     vue.component('mh-form', Form);

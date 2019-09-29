@@ -80,6 +80,7 @@ function getFullName(name: string, list?: string[]): string[] {
 
 export class FormObj extends Store implements FormUtils {
   private context: Vue;
+  private loading = false;
 
   public constructor(context: Vue) {
     super();
@@ -171,6 +172,11 @@ export class FormObj extends Store implements FormUtils {
   }
 
   public validateFields(func: (values: {[name: string]: any}, errors: {[name: string]: FormError[]}) => void, names?: string[]) {
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
+    setTimeout(() => this.loading = false, 1000);
     const values = this.getFieldValues(names);
     const errors: any = {};
     getNames(values).forEach((name) => {

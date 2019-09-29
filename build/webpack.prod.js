@@ -1,6 +1,7 @@
 const path = require('path');
 const merge = require('webpack-merge');
 const config = require('./webpack.base');
+const DropConsoleWebpackPlugin = require('drop-console-webpack-plugin');
 
 module.exports = merge(config, {
   entry: {
@@ -33,4 +34,12 @@ module.exports = merge(config, {
       }
     }
   },
+  plugins: [
+    new DropConsoleWebpackPlugin({
+      drop_log: true,
+      drop_info: true,
+      drop_warn: false,
+      drop_error: false,
+    }),
+  ],
 });

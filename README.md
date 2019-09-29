@@ -1,6 +1,8 @@
 # vue-master-form
 
-`type FormRule = {
+API
+
+type FormRule = {
   // 效验类型
   type: 'min'|'max'|'required'|'diy';
   // 效验值
@@ -9,9 +11,9 @@
   message?: string;
   // 当 type === 'diy' 效验规则
   validator?: (data: any, value: any) => boolean;
-}`
+}
 
-`type FormOptions = {
+type FormOptions = {
   // 初始值
   initValue?: any;
   // 从事件中获取值
@@ -22,18 +24,18 @@
   trigger?: string;
   // 将值带入组件前进行转化
   normalize?: (data: any) => any;
-}`
+}
 
-`type FormError = {
+type FormError = {
   // 错误类型
   type: string;
   // 错误消息
   message: string;
-}`
+}
 
-`type getInputs = (h: CreateElement) => (type?: string, data?: any) => VNode;
-`
-`type FormUtils =  {
+type getInputs = (h: CreateElement) => (type?: string, data?: any) => VNode;
+
+type FormUtils =  {
   // 重置表单， 如果传了names，只重置names的组件
   resetFields: (names?: string[]) => void;
   // 获取表单组件的值，如果传了names，只获取names的组件的值
@@ -50,9 +52,9 @@
   getErrors: (name?: string[]) => {[name: string]: FormError[]};
   // 效验表单的值，如果传了names，只效验names的组件
   validateFields: (func: (values: {[name: string]: any}, errors: {[name: string]: FormError[]}) => void, name?: string[]) => void;
-}`
+}
 
-`interface IFormItem {
+interface IFormItem {
   // 组件的值的名称
   name?: string;
   // 组件类型
@@ -79,18 +81,18 @@
   initData?: any;
   // 传到 getInputs 的 data 的值
   inputData?: any;
-}`
+}
 
-`interface ItemAttrs extends IFormItem {
+interface ItemAttrs extends IFormItem {
   // 是否显示该组件
   show?: boolean;
   // VNode
   input?: VNode;
   // 监听change事件
   onChange?: (e: any) => void;
-}`
+}
 
-`interface IForm {
+interface IForm {
   // 监听submit事件
   onSubmit?: () => void;
   // 监听form事件 获取FormUtil对象
@@ -101,4 +103,4 @@
   initData?: any;
   // 表单组件配置
   items?: ItemAttrs[];
-}`
+}

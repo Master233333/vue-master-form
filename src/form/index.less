@@ -6,6 +6,17 @@
   .mh-form-item-error {
     color: #f5222d;
   }
+  .mh-form-item-label-required label::before {
+    display: inline-block;
+    margin-right: 4px;
+    content: "*";
+    line-height: 1;
+    font-size: 14px;
+    color: #f5222d;
+  }
+}
+.mh-form-layout-vertical .mh-form-item-label {
+  padding-bottom: 8px;
 }
 
 .mh-form-layout-horizontal, .mh-form-layout-inline {
