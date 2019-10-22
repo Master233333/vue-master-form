@@ -38,7 +38,7 @@ export function renderFormItem(h: CreateElement, item: ItemAttrs, initData?: any
 @Component
 export default class Form extends TsxComponent<IForm>{
   @Provide()
-  public readonly form = createFormObj(this);
+  public form = createFormObj(this, this.onChange);
   @Prop()
   public layout!: string;
   @Prop()
@@ -53,8 +53,16 @@ export default class Form extends TsxComponent<IForm>{
     console.log('Form: created');
     this.$emit('form', this.form);
   }
+  public onChange(value: any) {
+    this.$emit('change', value);
+  }
   public onSubmit(e: Event) {
     e.preventDefault();
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
+    setTimeout(() => this.loading = false, 1000);
     this.form.validateFields((values: any, errs: any) => {
       console.log('Form: submit: ', values, errs);
       if (!errs) {

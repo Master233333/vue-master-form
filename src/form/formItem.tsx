@@ -2,6 +2,7 @@ import {Component, Inject, Prop} from 'vue-property-decorator';
 import {Component as TsxComponent} from 'vue-tsx-support';
 import {FormOptions, FormRule, IFormItem, IVNodeData} from '../../types/form';
 import {FormObj} from './core/createFormObj';
+import Item from './core/item';
 import config from './config';
 import {VNode} from 'vue';
 
@@ -37,21 +38,6 @@ export default class FormItem extends TsxComponent<IFormItem> {
   public inputData!: any;
   public getInput = config.getInputs(this.$createElement);
 
-  public created() {
-    console.log('FormItem: add field', this.name);
-    if (this.name && this.bindValue !== false) {
-      this.form.addField(this.name);
-    }
-  }
-  public destroyed() {
-    if (this.options && this.options.preserve) {
-      return;
-    }
-    console.log('FormItem: remove field', this.name);
-    if (this.name) {
-      this.form.removeField(this.name);
-    }
-  }
   public render() {
     console.log("FormItem: render");
     const {name, type, inputProps, rules, options, title, extra, text, editable, required, bindValue, initData, getInput, inputData, form} = this;
@@ -78,20 +64,20 @@ export default class FormItem extends TsxComponent<IFormItem> {
         input = data;
       }
     } else if (input && bindValue !== false && name) {
-      input = form.bindField(this, name, rl, opt)(input, inputProps);
+      input = <Item name={name} context={this} rules={rl} options={opt} inputProps={inputProps}>{input}</Item>;
       const errors = this.form.getError(name);
       if (errors && errors.length) {
         errorMsg = errors[0].message;
       }
     }
     // @ts-ignore
-    return <div class="mh-form-item" for={name}>
+    return <div class={{'mh-form-item': true, 'mh-form-item-help': errorMsg || extra, 'mh-form-item-editable': editable === false}} for={name}>
       <div class={{'mh-form-item-label': true, 'mh-form-item-label-required': required && editable !== false}}>
         {title && <label>{title}</label>}
       </div>
       <div class="mh-form-item-control-wrapper">
         <div class="mh-form-item-control">{input}</div>
-        {errorMsg && <div class="mh-form-item-error">{errorMsg.replace(/%t/, title)}</div>}
+        {errorMsg && <div class="mh-form-item-error">{errorMsg.replace(/%t/, title || '')}</div>}
         {extra && <div class="mh-form-item-extra">{extra}</div>}
       </div>
     </div>;

@@ -1,3 +1,6 @@
+import {VNode} from 'vue';
+import {cloneElement, getVNodeListeners} from './vnode';
+
 const camelizeRE = /-(\w)/g;
 const camelize = (str: string) => {
   return str.replace(camelizeRE, (_, c) => (c ? c.toUpperCase() : ''));

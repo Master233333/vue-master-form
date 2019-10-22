@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import IForm, {renderFormItem} from './form';
 import FormItem from './formItem';
+import Item from './core/item';
 import config from './config';
 import './index.less';
 import {getInputs} from '../../types/form';
@@ -27,4 +28,4 @@ export class Form extends IForm {
   }
 }
 
-export {FormItem, renderFormItem};
+export {FormItem, renderFormItem, Item};

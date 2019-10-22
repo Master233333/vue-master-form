@@ -24,7 +24,10 @@ function validateRules(value: any, rules?: FormRule[]) {
   rules.forEach((rule) => {
     switch (rule.type) {
       case 'required':
-        if (!value) {
+        if (value === '' || value === undefined || value === null) {
+          addError(rule);
+        }
+        if (value && value.length === 0) {
           addError(rule);
         }
         break;
@@ -80,11 +83,12 @@ function getFullName(name: string, list?: string[]): string[] {
 
 export class FormObj extends Store implements FormUtils {
   private context: Vue;
-  private loading = false;
+  private onChange: (value: any) => void;
 
-  public constructor(context: Vue) {
+  public constructor(context: Vue, onChange: (value: any) => void) {
     super();
     this.context = context;
+    this.onChange = onChange;
   }
   public setValues(val: any) {
     super.setValues(val);
@@ -172,11 +176,6 @@ export class FormObj extends Store implements FormUtils {
   }
 
   public validateFields(func: (values: {[name: string]: any}, errors: {[name: string]: FormError[]}) => void, names?: string[]) {
-    if (this.loading) {
-      return;
-    }
-    this.loading = true;
-    setTimeout(() => this.loading = false, 1000);
     const values = this.getFieldValues(names);
     const errors: any = {};
     getNames(values).forEach((name) => {
@@ -251,6 +250,7 @@ export class FormObj extends Store implements FormUtils {
       super.setValues({[name]: value});
       const errs = validateRules(value, this.getOption(name, 'rules'));
       this.setOption(name, {hasChange: true, errors: errs});
+      this.onChange({[name]: value});
       console.log(`FormObj: change name:${name} value:${value}`);
     };
   }
@@ -263,18 +263,18 @@ export class FormObj extends Store implements FormUtils {
   private forceUpdateAll() {
     console.log('FormObj: update all');
     this.forceUpdate();
-    const child = this.context.$slots.default;
+    const child = this.context.$children;
     if (!child) {
       return;
     }
     child.forEach((c) => {
-      if (c.context) {
-        c.context.$forceUpdate();
+      if (c && c.$forceUpdate) {
+        c.$forceUpdate();
       }
     });
   }
 }
 
-export function createFormObj(context: Vue) {
-  return Object.freeze(new FormObj(context));
+export function createFormObj(context: Vue, onChange: (value: any) => void) {
+  return Object.freeze(new FormObj(context, onChange));
 }

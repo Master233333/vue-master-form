@@ -56,6 +56,14 @@ export type FormUtils =  {
   validateFields: (func: (values: {[name: string]: any}, errors: {[name: string]: FormError[]}) => void, name?: string[]) => void;
 }
 
+export interface IItem {
+  name: string;
+  context: any;
+  inputProps?: IVNodeData;
+  options?: FormOptions;
+  rules?: FormRule[];
+}
+
 export interface IFormItem {
   // 组件的值的名称
   name?: string;

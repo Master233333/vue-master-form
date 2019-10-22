@@ -1,4 +1,5 @@
 import {CreateElement} from 'vue';
+import {Input} from 'ant-design-vue';
 
 class Config {
   public errorMessage: any = {
@@ -8,7 +9,8 @@ class Config {
   };
 
   public getInputs = (h: CreateElement) => {
-    return (type?: string, data?: any) => {};
+    return (type?: string, data?: any) => {
+    };
   };
 
 }

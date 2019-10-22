@@ -27,7 +27,7 @@ class App extends VueComponent {
       <div>
         <div>
           <h3>test for base form</h3>
-          <Form onForm={(f: FormUtils) => this.form = f} items={items} layout="horizontal">
+          <Form onForm={(f: FormUtils) => this.form = f} items={items} layout="horizontal" onChange={v => console.log(v)}>
             <button type="submit">sub</button>
           </Form>
           <button onClick={() => this.form.resetFields()}>reset</button>
