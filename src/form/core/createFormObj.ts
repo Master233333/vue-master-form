@@ -84,12 +84,24 @@ function getFullName(name: string, list?: string[]): string[] {
 export class FormObj extends Store implements FormUtils {
   private context: Vue;
   private onChange: (value: any) => void;
+  private items: any = {};
 
   public constructor(context: Vue, onChange: (value: any) => void) {
     super();
     this.context = context;
     this.onChange = onChange;
   }
+
+  public addField(name: string, context?: Vue) {
+    super.addField(name);
+    this.items[name] = context;
+  }
+
+  public removeField(name: string) {
+    super.removeField(name);
+    delete this.items[name];
+  }
+
   public setValues(val: any) {
     super.setValues(val);
     this.forceUpdateAll();
@@ -102,7 +114,7 @@ export class FormObj extends Store implements FormUtils {
 
   public getValue(name: string) {
     const value = super.getValue(name);
-    if (!value && this.getOption(name, 'hasChange') !== true) {
+    if ((value === undefined || value === null) && this.getOption(name, 'hasChange') !== true) {
       return this.getOption(name, 'initValue');
     }
     return value;
@@ -263,13 +275,10 @@ export class FormObj extends Store implements FormUtils {
   private forceUpdateAll() {
     console.log('FormObj: update all');
     this.forceUpdate();
-    const child = this.context.$children;
-    if (!child) {
-      return;
-    }
-    child.forEach((c) => {
-      if (c && c.$forceUpdate) {
-        c.$forceUpdate();
+    const {items} = this;
+    Object.keys(items).forEach((c) => {
+      if (items[c] && items[c].$forceUpdate) {
+        items[c].$forceUpdate();
       }
     });
   }

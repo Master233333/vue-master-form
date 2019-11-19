@@ -15,6 +15,14 @@ class App extends VueComponent {
         name: 'test1',
         title: 'test1',
         required: true,
+        inputProps: {
+          attrs: {
+            placeholder: 'test',
+            addonAfter: 'aaa',
+            allowClear: true,
+            prefix: 'ppp',
+          },
+        }
       },
       {
         name: 'test2',

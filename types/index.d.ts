@@ -7,4 +7,5 @@ export type FormUtils = FormUtils
 export type ItemAttrs = ItemAttrs
 export declare class Form extends MhComponent<IForm> {}
 export declare class FormItem extends TsxComponent<IFormItem> {}
+export declare class InputItem extends TsxComponent<IFormItem> {}
 export declare function renderFormItem(h: CreateElement, item: ItemAttrs, initData?: any): VNode

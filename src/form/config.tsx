@@ -1,5 +1,4 @@
 import {CreateElement} from 'vue';
-import {Input} from 'ant-design-vue';
 
 class Config {
   public errorMessage: any = {

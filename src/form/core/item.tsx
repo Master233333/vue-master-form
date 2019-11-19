@@ -20,7 +20,7 @@ export default class Item extends TsxComponent<IItem> {
 
   public created() {
     console.log('Item: add field', this.name);
-    this.form.addField(this.name);
+    this.form.addField(this.name, this.context);
   }
   public destroyed() {
     if (this.options && this.options.preserve) {

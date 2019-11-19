@@ -71,7 +71,7 @@ export default class FormItem extends TsxComponent<IFormItem> {
       }
     }
     // @ts-ignore
-    return <div class={{'mh-form-item': true, 'mh-form-item-help': errorMsg || extra, 'mh-form-item-editable': editable === false}} for={name}>
+    return <div class={{'mh-form-item': true, 'mh-form-item-help': errorMsg || extra, 'mh-form-item-editable': editable === false, 'has-error': errorMsg}} for={name}>
       <div class={{'mh-form-item-label': true, 'mh-form-item-label-required': required && editable !== false}}>
         {title && <label>{title}</label>}
       </div>

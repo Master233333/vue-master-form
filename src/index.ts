@@ -1,3 +1,3 @@
-import {Form, FormItem, renderFormItem, setGetInputs, setErrorMessage, Item} from './form';
+import {Form, FormItem, renderFormItem, setGetInputs, setErrorMessage, Item, InputItem} from './form';
 
-export {Form, FormItem, renderFormItem, setGetInputs, setErrorMessage, Item};
+export {Form, FormItem, renderFormItem, setGetInputs, setErrorMessage, Item, InputItem};

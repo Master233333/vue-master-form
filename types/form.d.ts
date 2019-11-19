@@ -64,6 +64,17 @@ export interface IItem {
   rules?: FormRule[];
 }
 
+export interface IInputItem {
+  // 将值带入组件前进行转化
+  normalize?: (data: any, emit?: (data: any) => void) => any;
+  // 从事件中获取值
+  getValueFromEvent?: (e: any) => any;
+  // 收集值的时机 默认change
+  trigger?: string;
+  value?: any;
+  [name: string]: any;
+}
+
 export interface IFormItem {
   // 组件的值的名称
   name?: string;
