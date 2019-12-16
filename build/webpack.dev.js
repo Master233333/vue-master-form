@@ -10,6 +10,7 @@ module.exports = merge(config, {
   devServer: {
     progress: true,
     port: '4000',
+    host: '0.0.0.0'
   },
   output: {
     path: path.join(__dirname, '../dist'),

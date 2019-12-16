@@ -39,7 +39,6 @@ export default class FormItem extends TsxComponent<IFormItem> {
   public getInput = config.getInputs(this.$createElement);
 
   public render() {
-    console.log("FormItem: render");
     const {name, type, inputProps, rules, options, title, extra, text, editable, required, bindValue, initData, getInput, inputData, form} = this;
     let input: any = this.$slots.default || getInput(type || 'text', inputData);
     const data = initData && name && initData[name];

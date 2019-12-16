@@ -6,7 +6,8 @@ module.exports = {
         functional: false
       }
     ],
-    '@babel/preset-typescript'
+    '@babel/preset-typescript',
+    '@babel/preset-env'
   ],
   plugins: [
     [
@@ -21,5 +22,11 @@ module.exports = {
         loose: true
       }
     ],
-  ]
+    [
+      'babel-plugin-transform-remove-console',
+      {
+        exclude: ['error', 'warn'],
+      },
+    ],
+  ],
 };

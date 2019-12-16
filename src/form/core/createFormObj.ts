@@ -81,6 +81,34 @@ function getFullName(name: string, list?: string[]): string[] {
   }
 }
 
+function setObjValues(out: any, name: string, value: any) {
+  const reg = /^[\d|\.]*$/;
+  // 把[ ]形式转list
+  const ns = getFullName(name);
+  let newName = '';
+  ns.forEach((nn, i) => {
+    // tslint:disable-next-line:no-eval
+    const obj = eval('out' + newName);
+    if (i === ns.length - 1) {
+      // 解析到最后一层，赋值
+      obj[nn] = value;
+    } else if (!obj[nn]) {
+      // 不是最后一层，新建list或者object对象
+      const isNum = reg.test(ns[i]);
+      obj[nn] = isNum ? [] : {};
+    } else {
+      const isNum = reg.test(ns[i]);
+      if (isNum && Array.isArray(obj[nn])) {
+        console.error('FormObj: can not setForm with diff type');
+      }
+      if (!isNum && typeof obj[nn] !== 'object') {
+        console.error('FormObj: can not setForm with diff type');
+      }
+    }
+    newName += `['${nn}']`;
+  });
+}
+
 export class FormObj extends Store implements FormUtils {
   private context: Vue;
   private onChange: (value: any) => void;
@@ -123,29 +151,21 @@ export class FormObj extends Store implements FormUtils {
   public getValues(names?: string[]) {
     const out: any = {};
     const values = this.getFieldValues(names);
-    const reg = /^[\d|\.]*$/;
     getNames(values).forEach((name) => {
-      const ns = getFullName(name);
-      let newName = '';
-      ns.forEach((nn, i) => {
-        // tslint:disable-next-line:no-eval
-        const obj = eval('out' + newName);
-        if (i === ns.length - 1) {
-          obj[nn] = values[name];
-        } else if (!obj[nn]) {
-          const isNum = reg.test(ns[i]);
-          obj[nn] = isNum ? [] : {};
-        } else {
-          const isNum = reg.test(ns[i]);
-          if (isNum && Array.isArray(obj[nn])) {
-            console.error('FormObj: can not setForm with diff type');
-          }
-          if (!isNum && typeof obj[nn] !== 'object') {
-            console.error('FormObj: can not setForm with diff type');
-          }
-        }
-        newName += `['${nn}']`;
-      });
+      let nt = name.trim();
+      if (nt.charAt(0) === '[' && nt.charAt(nt.length - 1) === ']') {
+        nt = nt.substring(1, nt.length - 1);
+        nt.split(',').map((s, i) => {
+          setObjValues(out, s.trim(), values[name][i]);
+        });
+      } else if (nt.charAt(0) === '{' && nt.charAt(nt.length - 1) === '}') {
+        nt = nt.substring(1, nt.length - 1);
+        nt.split(',').map((s) => {
+          setObjValues(out, s.trim(), values[name][s]);
+        });
+      } else {
+        setObjValues(out, nt, values[name]);
+      }
     });
     return out;
   }
@@ -263,17 +283,14 @@ export class FormObj extends Store implements FormUtils {
       const errs = validateRules(value, this.getOption(name, 'rules'));
       this.setOption(name, {hasChange: true, errors: errs});
       this.onChange({[name]: value});
-      console.log(`FormObj: change name:${name} value:${value}`);
     };
   }
 
   private forceUpdate() {
-    console.log('FormObj: update');
     this.context.$forceUpdate();
   }
 
   private forceUpdateAll() {
-    console.log('FormObj: update all');
     this.forceUpdate();
     const {items} = this;
     Object.keys(items).forEach((c) => {

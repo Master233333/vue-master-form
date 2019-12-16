@@ -50,7 +50,6 @@ export default class Form extends TsxComponent<IForm>{
   public loading = false;
 
   public created() {
-    console.log('Form: created');
     this.$emit('form', this.form);
   }
   public onChange(value: any) {
@@ -64,7 +63,6 @@ export default class Form extends TsxComponent<IForm>{
     this.loading = true;
     setTimeout(() => this.loading = false, 1000);
     this.form.validateFields((values: any, errs: any) => {
-      console.log('Form: submit: ', values, errs);
       if (!errs) {
         this.$emit('submit', values);
       }

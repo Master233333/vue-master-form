@@ -9,7 +9,6 @@ import {ItemAttrs} from '../types/form';
 class App extends VueComponent {
   public form!: FormUtils;
   public render() {
-    console.log('Demo: render');
     const items: ItemAttrs[] = [
       {
         name: 'test1',
@@ -35,7 +34,7 @@ class App extends VueComponent {
       <div>
         <div>
           <h3>test for base form</h3>
-          <Form onForm={(f: FormUtils) => this.form = f} items={items} layout="horizontal" onChange={v => console.log(v)}>
+          <Form onForm={(f: FormUtils) => this.form = f} items={items} layout="horizontal" >
             <button type="submit">sub</button>
           </Form>
           <button onClick={() => this.form.resetFields()}>reset</button>

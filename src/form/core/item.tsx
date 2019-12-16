@@ -19,18 +19,15 @@ export default class Item extends TsxComponent<IItem> {
   public context?: any;
 
   public created() {
-    console.log('Item: add field', this.name);
     this.form.addField(this.name, this.context);
   }
   public destroyed() {
     if (this.options && this.options.preserve) {
       return;
     }
-    console.log('Item: remove field', this.name);
     this.form.removeField(this.name);
   }
   public render() {
-    console.log("Item: render");
     const {name, inputProps, rules, options, form, context} = this;
     // @ts-ignore
     const input: any = this.$slots.default[0];
