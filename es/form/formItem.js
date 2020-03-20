@@ -164,7 +164,11 @@ function (_TsxComponent) {
         if (errors && errors.length) {
           errorMsg = errors[0].message;
         }
-      } // @ts-ignore
+      } // if (typeof errorMsg === 'string') {
+      //   // @ts-ignore
+      //   errorMsg = errorMsg.replace(/%t/, title || '');
+      // }
+      // @ts-ignore
 
 
       return h("div", {

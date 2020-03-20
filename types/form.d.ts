@@ -1,5 +1,8 @@
 import {CreateElement, VNode, VNodeData} from 'vue';
 
+type validatorPromise = (data: any, value: any) => Promise<never>;
+type validatorBoolean = (data: any, value: any) => boolean;
+
 export interface IVNodeData extends VNodeData {
   children?: VNode[];
 }
@@ -10,9 +13,11 @@ export type FormRule = {
   // 效验值
   value?: any;
   // 效验错误时的消息
-  message?: string;
+  message?: string | VNode;
   // 当 type === 'diy' 效验规则
-  validator?: (data: any, value: any) => boolean;
+  validator?: validatorPromise | validatorBoolean;
+  // 效验时机
+  trigger?: string;
 }
 
 export type FormOptions = {
@@ -125,4 +130,5 @@ export interface IForm {
   initData?: any;
   // 表单组件配置
   items?: ItemAttrs[];
+  preventSubmit?: boolean;
 }

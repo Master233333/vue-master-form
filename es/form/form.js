@@ -14,7 +14,7 @@ var _formItem = _interopRequireDefault(require("./formItem"));
 
 var _vueTsxSupport = require("vue-tsx-support");
 
-var _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _temp;
+var _dec, _dec2, _dec3, _dec4, _dec5, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _temp;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -89,7 +89,7 @@ var Form = (_dec = (0, _vuePropertyDecorator.Provide)(), _dec2 = (0, _vuePropert
   default: function _default() {
     return [];
   }
-}), (0, _vuePropertyDecorator.Component)(_class = (_class2 = (_temp =
+}), _dec5 = (0, _vuePropertyDecorator.Prop)(), (0, _vuePropertyDecorator.Component)(_class = (_class2 = (_temp =
 /*#__PURE__*/
 function (_TsxComponent) {
   _inherits(Form, _TsxComponent);
@@ -115,6 +115,8 @@ function (_TsxComponent) {
 
     _initializerDefineProperty(_this, "items", _descriptor4, _assertThisInitialized(_this));
 
+    _initializerDefineProperty(_this, "preventSubmit", _descriptor5, _assertThisInitialized(_this));
+
     _this.loading = false;
     return _this;
   }
@@ -136,7 +138,7 @@ function (_TsxComponent) {
 
       e.preventDefault();
 
-      if (this.loading) {
+      if (this.loading || this.preventSubmit) {
         return;
       }
 
@@ -194,6 +196,11 @@ function (_TsxComponent) {
   writable: true,
   initializer: null
 }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, "items", [_dec4], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: null
+}), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, "preventSubmit", [_dec5], {
   configurable: true,
   enumerable: true,
   writable: true,

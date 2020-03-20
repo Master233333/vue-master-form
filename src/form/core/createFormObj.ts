@@ -8,13 +8,16 @@ import config from '../config';
 
 const errorMessage = config.errorMessage;
 
-function validateRules(value: any, rules?: FormRule[]) {
+function validateRules(value: any, rules: FormRule[] = [], trigger: string) {
   if (!rules) {
     return [];
   }
   const errors: FormError[] = [];
   const addError = (rule: FormRule) => {
     let defaultMsg = errorMessage[rule.type] || 'error';
+    // if (typeof defaultMsg === 'string') {
+    //   defaultMsg = defaultMsg.replace(/%v/, rule.value);
+    // }
     defaultMsg = defaultMsg.replace(/%v/, rule.value);
     errors.push({
       type: rule.type,
@@ -22,6 +25,9 @@ function validateRules(value: any, rules?: FormRule[]) {
     });
   };
   rules.forEach((rule) => {
+    if (rule.trigger === 'submit' && trigger !== 'submit') {
+      return;
+    }
     switch (rule.type) {
       case 'required':
         if (value === '' || value === undefined || value === null) {
@@ -52,7 +58,14 @@ function validateRules(value: any, rules?: FormRule[]) {
         if (!rule.validator) {
           break;
         }
-        if (rule.validator(value, rule.value)) {
+        const out = rule.validator(value, rule.value);
+        if (typeof out !== 'boolean' && out && out.then) {
+          out.then((res) => {
+            if (res) {
+              addError(rule);
+            }
+          })
+        } else if (out) {
           addError(rule);
         }
         break;
@@ -94,7 +107,7 @@ function setObjValues(out: any, name: string, value: any) {
       obj[nn] = value;
     } else if (!obj[nn]) {
       // 不是最后一层，新建list或者object对象
-      const isNum = reg.test(ns[i]);
+      const isNum = reg.test(ns[i + 1]);
       obj[nn] = isNum ? [] : {};
     } else {
       const isNum = reg.test(ns[i]);
@@ -156,12 +169,12 @@ export class FormObj extends Store implements FormUtils {
       if (nt.charAt(0) === '[' && nt.charAt(nt.length - 1) === ']') {
         nt = nt.substring(1, nt.length - 1);
         nt.split(',').map((s, i) => {
-          setObjValues(out, s.trim(), values[name][i]);
+          setObjValues(out, s.trim(), values[name] && values[name][i]);
         });
       } else if (nt.charAt(0) === '{' && nt.charAt(nt.length - 1) === '}') {
         nt = nt.substring(1, nt.length - 1);
         nt.split(',').map((s) => {
-          setObjValues(out, s.trim(), values[name][s]);
+          setObjValues(out, s.trim(), values[name] && values[name][s]);
         });
       } else {
         setObjValues(out, nt, values[name]);
@@ -212,7 +225,7 @@ export class FormObj extends Store implements FormUtils {
     const errors: any = {};
     getNames(values).forEach((name) => {
       const rules = this.getOption(name, 'rules');
-      const errs = validateRules(values[name], rules);
+      const errs = validateRules(values[name], rules, 'submit');
       this.setOption(name, {errors: errs});
       if (errs.length) {
         errors[name] = errs;
@@ -280,7 +293,7 @@ export class FormObj extends Store implements FormUtils {
         value = e.target.checked || e.target.value;
       }
       super.setValues({[name]: value});
-      const errs = validateRules(value, this.getOption(name, 'rules'));
+      const errs = validateRules(value, this.getOption(name, 'rules'), 'change');
       this.setOption(name, {hasChange: true, errors: errs});
       this.onChange({[name]: value});
     };

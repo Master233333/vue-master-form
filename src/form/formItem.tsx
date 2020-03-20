@@ -69,6 +69,10 @@ export default class FormItem extends TsxComponent<IFormItem> {
         errorMsg = errors[0].message;
       }
     }
+    // if (typeof errorMsg === 'string') {
+    //   // @ts-ignore
+    //   errorMsg = errorMsg.replace(/%t/, title || '');
+    // }
     // @ts-ignore
     return <div class={{'mh-form-item': true, 'mh-form-item-help': errorMsg || extra, 'mh-form-item-editable': editable === false, 'has-error': errorMsg}} for={name}>
       <div class={{'mh-form-item-label': true, 'mh-form-item-label-required': required && editable !== false}}>

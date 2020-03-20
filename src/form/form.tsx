@@ -47,6 +47,8 @@ export default class Form extends TsxComponent<IForm>{
     default: () => [],
   })
   public items!: ItemAttrs[];
+  @Prop()
+  public preventSubmit!: boolean;
   public loading = false;
 
   public created() {
@@ -57,7 +59,7 @@ export default class Form extends TsxComponent<IForm>{
   }
   public onSubmit(e: Event) {
     e.preventDefault();
-    if (this.loading) {
+    if (this.loading || this.preventSubmit) {
       return;
     }
     this.loading = true;
